@@ -3,6 +3,50 @@ const ctx = canvas.getContext("2d");
 const backgroundImage = new Image();
 backgroundImage.src = "bg.png";
 
+
+canvas.addEventListener('touchstart', (event) => {
+  event.preventDefault();
+  handleTouchStart(event);
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (event) => {
+  event.preventDefault();
+  handleTouchMove(event);
+}, { passive: false });
+
+canvas.addEventListener('touchend', (event) => {
+  event.preventDefault();
+  handleTouchEnd(event);
+}, { passive: false });
+
+function handleTouchStart(event) {
+  const touch = event.touches[0];
+  const touchX = touch.clientX - canvas.offsetLeft;
+  const touchY = touch.clientY - canvas.offsetTop;
+
+  if (touchX >= player.x && touchX <= player.x + player.width &&
+      touchY >= player.y && touchY <= player.y + player.height) {
+    player.isDragging = true;
+  }
+}
+
+function handleTouchMove(event) {
+  if (player.isDragging) {
+    const touch = event.touches[0];
+    const touchX = touch.clientX - canvas.offsetLeft;
+    const touchY = touch.clientY - canvas.offsetTop;
+
+    player.x = Math.min(Math.max(touchX - player.width / 2, 0), (canvas.width / 2) - player.width);
+    player.y = Math.min(Math.max(touchY - player.height / 2, 0), canvas.height - player.height);
+  }
+}
+
+function handleTouchEnd(event) {
+  player.isDragging = false;
+}
+
+
+
 class Paddle {
     constructor(x, y, isPlayer) {
       this.x = x;
